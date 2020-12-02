@@ -23,9 +23,9 @@ RSpec.describe Task, type: :model do
   end
 
   it 'is invalid without status' do
-    task = FactoryBot.create(:task)
-    task.update(status: nil)
-    expect(task.errors[:status]).to include("can't be blank")
+    task_without_status = build(:task, status: nil) 
+    expect(task_without_status).to be_invalid
+    expect(task_without_status.errors[:status]).to eq ["can't be blank"]
   end
 
   it 'is valid without content' do
