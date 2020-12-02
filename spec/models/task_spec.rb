@@ -28,16 +28,23 @@ RSpec.describe Task, type: :model do
     expect(task_without_status.errors[:status]).to eq ["can't be blank"]
   end
 
+  it 'is valid with another title' do
+    task = create(:task)
+    task_with_another_title = build(:task, title: "another_title")
+    expect(task_with_another_title).to be_valid
+    expect(task_with_another_title.errors[:title]).to be_empty
+  end
+
   it 'is valid without content' do
-    task = FactoryBot.create(:task)
-    task.update(content: nil)
-    expect(task).to be_valid
+    task_without_content = build(:task, content: "")
+    expect(task_without_content).to be_valid
+    expect(task_without_content.errors[:content]).to be_empty
   end
 
   it 'is valid without deadline' do
-    task = FactoryBot.create(:task)
-    task.update(deadline: nil)
-    expect(task).to be_valid
+    task_without_deadline = build(:task, deadline: "")
+    expect(task_without_deadline).to be_valid
+    expect(task_without_deadline.errors[:deadline]).to be_empty
   end
 
   end
