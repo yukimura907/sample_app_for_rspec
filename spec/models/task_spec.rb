@@ -16,8 +16,10 @@ RSpec.describe Task, type: :model do
   end
 
   it 'is invalid with a duplicate title' do
-    task = FactoryBot.create(:task)
-    expect(FactoryBot.build(:task)).to_not be_valid 
+    task = create(:task)
+    task_with_duplicate_title = build(:task, title: task.title)
+    expect(task_with_duplicate_title).to be_invalid
+    expect(task_with_duplicate_title.errors[:title]).to eq ["has already been taken"]
   end
 
   it 'is invalid without status' do
