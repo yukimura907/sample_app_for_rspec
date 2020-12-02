@@ -4,7 +4,9 @@ RSpec.describe Task, type: :model do
   describe 'validation' do
 
   it 'is valid with all attributes' do 
-    expect(FactoryBot.create(:task)).to be_valid
+    task = build(:task)
+    expect(task).to be_valid
+    expect(task.errors).to be_empty
   end
 
   it 'is invalid without title' do
