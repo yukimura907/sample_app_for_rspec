@@ -28,13 +28,14 @@ RSpec.describe "Users", type: :system do
 
       context '登録済のメールアドレスを使用' do
         it 'ユーザーの新規作成が失敗する' do 
-          user = create(:user, email: "test@example.com")
-          fill_in 'Email', with: 'test@example.com'
+          existed_user = create(:user)
+          fill_in 'Email', with: existed_user.email
           fill_in 'Password', with: 'test2046'
           fill_in 'Password confirmation', with: 'test2046'
           click_button 'SignUp'
           expect(page).to have_content "Email has already been taken"
           expect(current_path).to eq users_path
+          expect(page).to have_field 'Email', with: existed_user.email
         end
       end
     end
@@ -103,9 +104,14 @@ RSpec.describe "Users", type: :system do
     describe 'マイページ' do
       context 'タスクを作成' do
         it '新規作成したタスクが表示される' do 
-          task = create(:task, user: user)
+          create(:task, title: 'test_title', status: :doing, user: user)
           visit user_path(user)
-          expect(page).to have_content task.title
+          expect(page).to have_content('You have 1 task.')
+          expect(page).to have_content('test_title')
+          expect(page).to have_content('doing')
+          expect(page).to have_link('Show')
+          expect(page).to have_link('Edit')
+          expect(page).to have_link('Destroy')
         end
       end
     end

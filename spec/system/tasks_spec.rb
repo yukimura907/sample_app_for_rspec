@@ -2,18 +2,33 @@ require 'rails_helper'
 
 RSpec.describe "Tasks", type: :system do
 let(:user){ create(:user) }
-let!(:task){ create(:task, user: user) }
-describe 'ログイン前' do
-  describe 'ページの遷移' do
-    it 'タスクの新規作成ページへのアクセスが失敗する' do
-      visit new_task_path
-      expect(page).to have_content 'Login required'
-      expect(current_path).to eq login_path
-    end
-    it 'タスクの編集ページへのアクセスが失敗する' do
-      visit edit_task_path(user)
-      expect(page).to have_content 'Login required'
-      expect(current_path).to eq login_path
+let(:task){ create(:task, user: user) }
+
+  describe 'ログイン前' do
+    describe 'ページの遷移' do
+      it 'タスクの新規作成ページへのアクセスが失敗する' do
+        visit new_task_path
+        expect(page).to have_content 'Login required'
+        expect(current_path).to eq login_path
+      end
+      it 'タスクの編集ページへのアクセスが失敗する' do
+        visit edit_task_path(user)
+        expect(page).to have_content 'Login required'
+        expect(current_path).to eq login_path
+      end
+      it 'タスクの詳細情報が表示される' do
+        visit task_path(task)
+        expect(page).to have_content task.title
+        expect(current_path).to eq task_path(task)
+      end
+      it 'タスク一覧画面にアクセスし、すべてのユーザーのタスク情報が表示される' do
+        task_list = create_list(:task, 3)
+        visit tasks_path
+        expect(page).to have_content task_list[0].title
+        expect(page).to have_content task_list[1].title
+        expect(page).to have_content task_list[2].title
+        expect(current_path).to eq tasks_path
+      end
     end
   end
 
@@ -29,10 +44,14 @@ describe 'ログイン前' do
           fill_in 'Title', with: 'sample_title'
           fill_in 'Content', with: 'sample_content'
           select 'todo', from: 'task[status]'
-          fill_in 'Deadline', with: 1.week.from_now
+          fill_in 'Deadline', with: DateTime.new(2020, 6, 1, 10, 30)
           click_button 'Create Task'
           expect(page).to have_content 'Task was successfully created.'
-          expect(current_path).to eq '/tasks/2'
+          expect(page).to have_content 'Title: sample_title'
+          expect(page).to have_content 'Content: sample_content'
+          expect(page).to have_content 'Status: todo'
+          expect(page).to have_content 'Deadline: 2020/6/1 10:30'
+          expect(current_path).to eq '/tasks/1'
         end
       end 
 
@@ -106,6 +125,8 @@ describe 'ログイン前' do
     end
 
     describe 'タスクの削除' do
+      let!(:task) { create(:task, user: user) }
+
       it 'タスクの削除が成功する' do
         visit tasks_path
         click_link 'Destroy'
@@ -126,5 +147,4 @@ describe 'ログイン前' do
       end
     end
   end
-end
 end
