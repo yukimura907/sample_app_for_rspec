@@ -1,7 +1,8 @@
 require 'rails_helper'
 
-RSpec.describe "Tasks", type: :system, focus: true do
+RSpec.describe "Tasks", type: :system do
 let(:user){ create(:user) }
+let!(:task){ create(:task, user: user) }
 describe 'ログイン前' do
   describe 'ページの遷移' do
     it 'タスクの新規作成ページへのアクセスが失敗する' do
@@ -19,23 +20,24 @@ describe 'ログイン前' do
 
   describe 'ログイン後' do
     before { login_as(user) }
+
     describe 'タスクの新規作成' do
-      let(:task){ create(:task) }
+      before { visit new_task_path }
+
       context 'フォームの入力値が正常' do
         it 'タスクの新規作成が成功する' do
-          visit new_task_path
           fill_in 'Title', with: 'sample_title'
           fill_in 'Content', with: 'sample_content'
           select 'todo', from: 'task[status]'
           fill_in 'Deadline', with: 1.week.from_now
           click_button 'Create Task'
           expect(page).to have_content 'Task was successfully created.'
+          expect(current_path).to eq '/tasks/2'
         end
       end 
 
       context 'タイトルが未入力' do
         it 'タスクの新規作成が失敗する' do
-          visit new_task_path
           fill_in 'Content', with: 'sample_content'
           select 'todo', from: 'task[status]'
           fill_in 'Deadline', with: 1.week.from_now
@@ -47,8 +49,8 @@ describe 'ログイン前' do
 
       context '登録済みのタイトルを使用' do
         it 'タスクの新規作成が失敗する' do
-          visit new_task_path
-          fill_in 'Title', with: task.title
+          other_task = create(:task)
+          fill_in 'Title', with: other_task.title
           fill_in 'Content', with: 'sample_content'
           select 'todo', from: 'task[status]'
           fill_in 'Deadline', with: 1.week.from_now
@@ -60,7 +62,6 @@ describe 'ログイン前' do
     end
 
     describe 'タスクの編集' do
-      let!(:task){ create(:task, user: user) }
       before { visit edit_task_path(task) }
 
       context 'フォームの入力値が正常' do
@@ -105,7 +106,6 @@ describe 'ログイン前' do
     end
 
     describe 'タスクの削除' do
-      let!(:task){ create(:task, user: user) }
       it 'タスクの削除が成功する' do
         visit tasks_path
         click_link 'Destroy'
