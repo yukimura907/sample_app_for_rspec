@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe "UserSessions", type: :system, do
+RSpec.describe "UserSessions", type: :system do
   let(:user){ create(:user) }
   describe 'ログイン前' do
     context 'フォームの入力値が正常' do
