@@ -3,7 +3,6 @@ require 'rails_helper'
 RSpec.describe "Tasks", type: :system do
 let(:user){ create(:user) }
 let(:task){ create(:task, user: user) }
-
   describe 'ログイン前' do
     describe 'ページの遷移' do
       it 'タスクの新規作成ページへのアクセスが失敗する' do
@@ -35,10 +34,8 @@ let(:task){ create(:task, user: user) }
 
   describe 'ログイン後' do
     before { login_as(user) }
-
     describe 'タスクの新規作成' do
       before { visit new_task_path }
-
       context 'フォームの入力値が正常' do
         it 'タスクの新規作成が成功する' do
           fill_in 'Title', with: 'sample_title'
@@ -82,14 +79,12 @@ let(:task){ create(:task, user: user) }
 
     describe 'タスクの編集' do
       before { visit edit_task_path(task) }
-
       context 'フォームの入力値が正常' do
         it 'タスクの編集が成功する' do
           fill_in 'Title', with: 'update_title'
           fill_in 'Content', with: 'update_content'
           select 'doing', from: 'task[status]'
           fill_in 'Deadline', with: '2020, 12, 19, 10, 30'
-          #fill_in 'Deadline', with: 1.week.from_now
           click_button 'Update Task'
           expect(page).to have_content "Task was successfully updated."
           expect(current_path).to eq task_path(task)
@@ -102,7 +97,6 @@ let(:task){ create(:task, user: user) }
           fill_in 'Content', with: 'update_content'
           select 'doing', from: 'task[status]'
           fill_in 'Deadline', with: '2020, 12, 19, 10, 30'
-          #fill_in 'Deadline', with: 1.week.from_now
           click_button 'Update Task'
           expect(page).to have_content "Title can't be blank"
           expect(current_path).to eq task_path(task)
@@ -116,7 +110,6 @@ let(:task){ create(:task, user: user) }
           fill_in 'Content', with: 'update_content'
           select 'doing', from: 'task[status]'
           fill_in 'Deadline', with: '2020, 12, 19, 10, 30'
-          #fill_in 'Deadline', with: 1.week.from_now
           click_button 'Update Task'
           expect(page).to have_content "Title has already been taken"
           expect(current_path).to eq task_path(task)
@@ -126,7 +119,6 @@ let(:task){ create(:task, user: user) }
 
     describe 'タスクの削除' do
       let!(:task) { create(:task, user: user) }
-
       it 'タスクの削除が成功する' do
         visit tasks_path
         click_link 'Destroy'

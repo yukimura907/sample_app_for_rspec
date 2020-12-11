@@ -37,10 +37,7 @@ RSpec.configure do |config|
   config.before(:each, type: :system) do
     driven_by :selenium, using: :headless_chrome
     #driven_by(:selenium_chrome) 
-  end
-end
-
-RSpec.configure do |config|                     
+  end                
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
 

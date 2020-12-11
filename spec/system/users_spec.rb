@@ -4,7 +4,6 @@ RSpec.describe "Users", type: :system do
   describe 'ログイン前' do
     describe 'ユーザー新規登録' do
       before { visit sign_up_path }
-
       context 'フォームの入力値が正常' do
         it 'ユーザーの新規作成が成功する' do 
           fill_in 'Email', with: 'test@example.com'
@@ -55,10 +54,8 @@ RSpec.describe "Users", type: :system do
   describe 'ログイン後' do
     let(:user){ create(:user) }
     before { login_as(user) }
-
     describe 'ユーザー編集' do
       before { visit edit_user_path(user) }
-
       context 'フォームの入力値が正常' do
         it 'ユーザーの編集が成功する' do 
           fill_in 'Email', with: 'another@example.com'
